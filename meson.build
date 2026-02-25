@@ -25,17 +25,21 @@ project(
 compiler = meson.get_compiler('cpp')
 
 m_dep = compiler.find_library('m', required : true)
-bz2_dep = dependency('bzip2', required: true)
+bz2_dep = declare_dependency(
+  compile_args: ['-sUSE_BZIP2'],
+  link_args: ['-sUSE_BZIP2'],
+)
 
 add_project_arguments(
   [
-    '-DMAXPAGES=8',
+    '-DMAXPAGES=16',
     '-DHD_MODE=1',
     '-DMESON_VERSION=@0@'.format(meson.version()),
     '-DGIT_TAG=@0@'.format(meson.project_version()),
   ],
-  language: 'cpp'
+  language: 'cpp',
 )
+
 
 sources = [
   'itwom3.0.cpp',
@@ -46,6 +50,7 @@ executable(
   'splat',
   sources,
   dependencies : [
-    bz2_dep
+    bz2_dep,
+    m_dep,
   ]
 )
