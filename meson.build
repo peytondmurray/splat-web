@@ -30,12 +30,22 @@ bz2_dep = declare_dependency(
   link_args: ['-sUSE_BZIP2'],
 )
 
+# https://github.com/sebastianotronto/emscripten-tutorial/blob/master/04_no_block/build.sh
 add_project_arguments(
   [
     '-DMAXPAGES=16',
     '-DHD_MODE=1',
     '-DMESON_VERSION=@0@'.format(meson.version()),
     '-DGIT_TAG=@0@'.format(meson.project_version()),
+    # '-sENVIRONMENT=web',
+    # '-sEXPORT_ES6=1',
+    '-sMODULARIZE',
+    # '-sFORCE_FILESYSTEM=1',
+    # '-sALLOW_MEMORY_GROWTH=1',
+    '-sEXPORTED_FUNCTIONS=_main',
+    # '-sEXPORTED_RUNTIME_METHODS=FS,callMain',
+    # '-sEXPORTED_RUNTIME_METHODS=FS,callMain,ccall,cwrap',
+    '-sEXPORT_NAME=Splat',
   ],
   language: 'cpp',
 )
