@@ -51,6 +51,7 @@ add_project_link_arguments(
     # '-sEXPORTED_RUNTIME_METHODS=FS,callMain',
     # '-sEXPORTED_RUNTIME_METHODS=FS,callMain,ccall,cwrap',
     '-sEXPORT_NAME=Splat',
+    '--emit-tsd=splat.d.ts',
   language: 'cpp',
 )
 
