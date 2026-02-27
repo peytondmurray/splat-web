@@ -3,26 +3,21 @@ on:
   release:
     types: [published]
 
+# See https://docs.npmjs.com/trusted-publishers#step-2-configure-your-cicd-workflow
+
 # Permission to generate an OIDC token
 permissions:
   id-token: write
+  contents: read
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0  # get the non-merge commit for PRs
           fetch-tags: true # include tags to get correct git version
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '23.x'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install meson and build toolchain
         run: |
@@ -33,20 +28,16 @@ jobs:
         with:
           version: 5.0.1
 
-      - name: Install node dependencies and build the project
-        run: |
-          npm ci
-          npm run build
-
-      # See https://github.com/orgs/community/discussions/176761. `setup-node` was messing with
-      # node authentication. This breaks publishing unless we clear the token.
-      - name: Clear auth token for OIDC
-        run: echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '25'
+          registry-url: 'https://registry.npmjs.org'
 
       # https://hackernoon.com/how-to-automatically-publish-your-npm-package-using-github-actions
       # Here we actually use `npm version from-git`, but just never commit the version.
-      - name: Update package.json with release tag
+      - name: Install node dependencies and build the project
         run: |
+          npm ci
           npm version from-git --no-git-tag-version --allow-same-version
-
-      - run: npm publish --provenance --access public
+          npm run build
+          npm publish --provenance --access public
