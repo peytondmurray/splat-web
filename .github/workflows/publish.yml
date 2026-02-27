@@ -3,7 +3,7 @@ on:
   release:
     types: [published]
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -18,13 +18,22 @@ jobs:
         with:
           node-version: '23.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+
+      - name: Install meson and emscripten
+        run: |
+          sudo apt update -y
+          sudo apt install -y meson ninja-build build-essential emscripten
+
+      - name: Install node dependencies and build the project
+        run: |
+          npm ci
+          npm run build
 
       # https://hackernoon.com/how-to-automatically-publish-your-npm-package-using-github-actions
       # Here we actually use `npm version from-git`, but just never commit the version.
       - name: Update package.json with release tag
         run: |
-          npm version from-git
+          npm version from-git --no-git-tag-version --allow-same-version
 
       - run: npm publish --provenance --access public
         env:

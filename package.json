@@ -22,6 +22,6 @@
   "scripts": {
     "setup": "meson setup dist --cross-file=emscripten-cross.ini",
     "compile": "meson compile -C dist",
-    "build": "pnpm run setup && pnpm run compile"
+    "build": "npm run setup && npm run compile"
   }
 }
