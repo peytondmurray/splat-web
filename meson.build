@@ -12,7 +12,7 @@ project(
     [
       'sh',
       '-c',
-      'git describe --tags --dirty --always --long --match *[0-9]* | sed -E "s/-0-g([0-9a-f]+)$//g"',
+      'npm version from-git --no-git-tag-version --allow-same-version',
     ],
     check: true
   ).stdout().strip(),

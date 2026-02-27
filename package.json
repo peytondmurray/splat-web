@@ -1,0 +1,27 @@
+{
+  "name": "splat-web",
+  "version": "0.0.0",
+  "description": "A wasm-compiled fork of splat: an RF Signal Propagation Loss, And Terrain analysis tool",
+  "homepage": "https://github.com/peytondmurray/splat-web",
+  "bugs": {
+    "url": "https://github.com/peytondmurray/splat-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peytondmurray/splat-web.git"
+  },
+  "license": "MIT",
+  "author": "Peyton Murray",
+  "type": "module",
+  "main": "dist/splat.js",
+  "files": [
+    "dist/splat.js",
+    "dist/splat.d.ts",
+    "dist/splat.wasm"
+  ],
+  "scripts": {
+    "setup": "meson setup dist --cross-file=emscripten-cross.ini",
+    "compile": "meson compile -C dist",
+    "build": "pnpm run setup && pnpm run compile"
+  }
+}

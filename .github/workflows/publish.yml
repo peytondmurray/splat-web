@@ -1,0 +1,31 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # get the non-merge commit for PRs
+          fetch-tags: true # include tags to get correct git version
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '23.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+
+      # https://hackernoon.com/how-to-automatically-publish-your-npm-package-using-github-actions
+      # Here we actually use `npm version from-git`, but just never commit the version.
+      - name: Update package.json with release tag
+        run: |
+          npm version from-git
+
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
