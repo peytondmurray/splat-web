@@ -38,6 +38,11 @@ jobs:
           npm ci
           npm run build
 
+      # See https://github.com/orgs/community/discussions/176761. `setup-node` was messing with
+      # node authentication. This breaks publishing unless we clear the token.
+      - name: Clear auth token for OIDC
+        run: echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
+
       # https://hackernoon.com/how-to-automatically-publish-your-npm-package-using-github-actions
       # Here we actually use `npm version from-git`, but just never commit the version.
       - name: Update package.json with release tag
