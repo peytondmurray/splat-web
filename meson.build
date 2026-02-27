@@ -43,7 +43,7 @@ add_project_arguments(
 # https://github.com/sebastianotronto/emscripten-tutorial/blob/master/04_no_block/build.sh
 add_project_link_arguments(
     # '-sENVIRONMENT=web',
-    # '-sEXPORT_ES6',
+    '-sEXPORT_ES6',
     '-sMODULARIZE',
     # '-sFORCE_FILESYSTEM=1',
     # '-sALLOW_MEMORY_GROWTH=1',
@@ -51,6 +51,7 @@ add_project_link_arguments(
     # '-sEXPORTED_RUNTIME_METHODS=FS,callMain',
     # '-sEXPORTED_RUNTIME_METHODS=FS,callMain,ccall,cwrap',
     '-sEXPORT_NAME=Splat',
+    '--emit-tsd=splat.d.ts',
   language: 'cpp',
 )
 
