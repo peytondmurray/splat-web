@@ -2,6 +2,11 @@ name: Publish Package to npmjs
 on:
   release:
     types: [published]
+
+# Permission to generate an OIDC token
+permissions:
+  id-token: write
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
@@ -40,5 +45,3 @@ jobs:
           npm version from-git --no-git-tag-version --allow-same-version
 
       - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
