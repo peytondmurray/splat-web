@@ -1,13 +1,6 @@
 project(
   'splat',
   'cpp',
-  # Get a version string:
-  # 1. If HEAD matches a tag, just show the tag
-  # 2. Otherwise, show
-  #
-  #   <most recent tag>-<number of commits since tag>-g<hash>
-  #
-  #   and optionally append a '-dirty' if the working tree is dirty.
   version: run_command(
     [
       'sh',
@@ -47,8 +40,8 @@ add_project_link_arguments(
     '-sMODULARIZE',
     # '-sFORCE_FILESYSTEM=1',
     # '-sALLOW_MEMORY_GROWTH=1',
-    '-sEXPORTED_FUNCTIONS=_main',
-    # '-sEXPORTED_RUNTIME_METHODS=FS,callMain',
+    # '-sEXPORTED_FUNCTIONS=_main',
+    '-sEXPORTED_RUNTIME_METHODS=FS,callMain',
     # '-sEXPORTED_RUNTIME_METHODS=FS,callMain,ccall,cwrap',
     '-sEXPORT_NAME=Splat',
     '--emit-tsd=splat.d.ts',
