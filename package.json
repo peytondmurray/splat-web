@@ -13,7 +13,10 @@
   "license": "MIT",
   "author": "Peyton Murray",
   "type": "module",
-  "main": "dist/splat.js",
+  "exports": {
+    "./splat": "dist/splat.js",
+    "./srtm2sdf": "dist/srtm2sdf.js"
+  },
   "files": [
     "dist/splat.js",
     "dist/splat.d.ts",
