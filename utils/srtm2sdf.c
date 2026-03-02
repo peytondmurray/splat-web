@@ -8,7 +8,7 @@
  **                    Compile like this:                    **
  **      cc -Wall -O3 -s -lbz2 srtm2sdf.c -o srtm2sdf        **
  **              Last modification: 08-Jan-2014              **
-\**************************************************************/ 
+\**************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -382,7 +382,7 @@ int LoadSDF_BZ(char *name)
 		sscanf(BZfgets(bzfd,255),"%d",&dummy);
 		sscanf(BZfgets(bzfd,255),"%d",&dummy);
 		sscanf(BZfgets(bzfd,255),"%d",&dummy);
-	
+
 		for (x=0; x<1200; x++)
 			for (y=0; y<1200; y++)
 				sscanf(BZfgets(bzfd,20),"%d",&usgs[x][y]);
@@ -500,7 +500,7 @@ int x, y, z;
 		}
 	}
 
-	if ((x>=1) && (y>=2)) 
+	if ((x>=1) && (y>=2))
 	{
 		temp=srtm[y-1][x-1];
 
@@ -664,7 +664,7 @@ int main(int argc, char **argv)
 
 				if (min_elevation<-32767)
 					min_elevation=0;
-			}			 
+			}
 		}
 	}
 
@@ -719,4 +719,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
