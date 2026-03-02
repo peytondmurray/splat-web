@@ -23,31 +23,17 @@ bz2_dep = declare_dependency(
   link_args: ['-sUSE_BZIP2'],
 )
 
-add_project_arguments(
-  [
-    '-DMAXPAGES=16',
-    '-DHD_MODE=1',
+wasm_compile_args = [
     '-DMESON_VERSION=@0@'.format(meson.version()),
     '-DGIT_TAG=@0@'.format(meson.project_version()),
-  ],
-  language: ['c', 'cpp'],
-)
+]
 
 # https://github.com/sebastianotronto/emscripten-tutorial/blob/master/04_no_block/build.sh
-add_project_link_arguments(
-    # '-sENVIRONMENT=web',
+wasm_link_args = [
     '-sEXPORT_ES6',
     '-sMODULARIZE',
-    # '-sFORCE_FILESYSTEM=1',
-    # '-sALLOW_MEMORY_GROWTH=1',
-    # '-sEXPORTED_FUNCTIONS=_main',
     '-sEXPORTED_RUNTIME_METHODS=FS,callMain',
-    # '-sEXPORTED_RUNTIME_METHODS=FS,callMain,ccall,cwrap',
-    '-sEXPORT_NAME=Splat',
-    '--emit-tsd=splat.d.ts',
-  language: ['c', 'cpp'],
-)
-
+]
 
 includes = [
   'src/fontdata.h'
@@ -62,6 +48,14 @@ executable(
   dependencies : [
     bz2_dep,
     m_dep,
+  ],
+  cpp_args : wasm_compile_args + [
+    '-DMAXPAGES=16',
+    '-DHD_MODE=1',
+  ],
+  link_args : wasm_link_args + [
+    '-sEXPORT_NAME=Splat',
+    '--emit-tsd=splat.d.ts',
   ]
 )
 
@@ -72,5 +66,10 @@ executable(
   ],
   dependencies : [
     bz2_dep,
+  ],
+  c_args : wasm_compile_args,
+  link_args : wasm_link_args + [
+    '-sEXPORT_NAME=Srtm2sdf',
+    '--emit-tsd=srtm2sdf.d.ts',
   ]
 )
