@@ -1,6 +1,6 @@
 project(
   'splat',
-  'cpp',
+  ['c', 'cpp'],
   version: run_command(
     [
       'sh',
@@ -30,7 +30,7 @@ add_project_arguments(
     '-DMESON_VERSION=@0@'.format(meson.version()),
     '-DGIT_TAG=@0@'.format(meson.project_version()),
   ],
-  language: 'cpp',
+  language: ['c', 'cpp'],
 )
 
 # https://github.com/sebastianotronto/emscripten-tutorial/blob/master/04_no_block/build.sh
@@ -45,14 +45,9 @@ add_project_link_arguments(
     # '-sEXPORTED_RUNTIME_METHODS=FS,callMain,ccall,cwrap',
     '-sEXPORT_NAME=Splat',
     '--emit-tsd=splat.d.ts',
-  language: 'cpp',
+  language: ['c', 'cpp'],
 )
 
-
-sources = [
-  'src/itwom3.0.cpp',
-  'src/splat.cpp'
-]
 
 includes = [
   'src/fontdata.h'
@@ -60,9 +55,22 @@ includes = [
 
 executable(
   'splat',
-  sources,
+  sources : [
+    'src/itwom3.0.cpp',
+    'src/splat.cpp'
+  ],
   dependencies : [
     bz2_dep,
     m_dep,
+  ]
+)
+
+executable(
+  'srtm2sdf',
+  sources : [
+    'utils/srtm2sdf.c'
+  ],
+  dependencies : [
+    bz2_dep,
   ]
 )
