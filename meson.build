@@ -32,8 +32,8 @@ wasm_compile_args = [
 wasm_link_args = [
     '-sEXPORT_ES6',
     '-sMODULARIZE',
-    '-sEXPORTED_RUNTIME_METHODS=FS,PROXYFS,callMain',
-    '-lproxyfs.js',
+    '-sEXPORTED_RUNTIME_METHODS=FS,IDBFS,callMain',
+    '-lidbfs.js',
 ]
 
 includes = [
