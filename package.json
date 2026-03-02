@@ -17,7 +17,10 @@
   "files": [
     "dist/splat.js",
     "dist/splat.d.ts",
-    "dist/splat.wasm"
+    "dist/splat.wasm",
+    "dist/srtm2sdf.js",
+    "dist/srtm2sdf.d.ts",
+    "dist/srtm2sdf.wasm"
   ],
   "scripts": {
     "setup": "meson setup dist --cross-file=emscripten-cross.ini",
