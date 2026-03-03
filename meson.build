@@ -58,8 +58,8 @@ executable(
     m_dep,
   ],
   cpp_args : wasm_compile_args + [
-    '-DMAXPAGES=16',
-    '-DHD_MODE=1',
+    '-DMAXPAGES=9',
+    '-DHD_MODE=0',
   ],
   link_args : wasm_link_args + [
     '-sEXPORT_NAME=Splat',
