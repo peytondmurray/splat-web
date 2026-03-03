@@ -34,6 +34,8 @@ wasm_link_args = [
     '-sMODULARIZE',
     '-sEXPORTED_RUNTIME_METHODS=FS,IDBFS,callMain',
     '-lidbfs.js',
+    '-sSTACK_SIZE=4294967296' # 2^32, rather than the default 2^16
+    '-sALLOW_MEMORY_GROWTH'
 ]
 
 includes = [
