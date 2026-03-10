@@ -26,7 +26,6 @@ bz2_dep = declare_dependency(
 wasm_compile_args = [
     '-DMESON_VERSION=@0@'.format(meson.version()),
     '-DGIT_TAG=@0@'.format(meson.project_version()),
-    '-sSTACK_SIZE=16777216', # 2^24, rather than the default 2^16
 ]
 
 # https://github.com/sebastianotronto/emscripten-tutorial/blob/master/04_no_block/build.sh
@@ -35,6 +34,7 @@ wasm_link_args = [
     '-sMODULARIZE',
     '-sEXPORTED_RUNTIME_METHODS=FS,IDBFS,callMain',
     '-lidbfs.js',
+    '-sSTACK_SIZE=16777216'
 ]
 
 includes = [
@@ -52,7 +52,7 @@ executable(
     m_dep,
   ],
   cpp_args : wasm_compile_args + [
-    '-DMAXPAGES=9',
+    '-DMAXPAGES=4',
     '-DHD_MODE=0',
   ],
   link_args : wasm_link_args + [

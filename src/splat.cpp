@@ -32,15 +32,6 @@
 #define GAMMA 2.5
 #define BZBUFFER 65536
 
-// Set some sensible defaults if they aren't defined at compile time
-#ifndef HD_MODE
-    #define HD_MODE 1
-#endif
-
-#ifndef MAXPAGES
-    #define MAXPAGES 16
-#endif
-
 #if HD_MODE==0
 	#if MAXPAGES==4
 	    #define ARRAYSIZE 4950
@@ -2874,11 +2865,22 @@ void PlotLRPath(struct site source, struct site destination, unsigned char mask_
 			elev[1]=METERS_PER_MILE*(path.distance[y]-path.distance[y-1]);
 
 			if (olditm)
-				point_to_point_ITM(elev,source.alt*METERS_PER_FOOT,
-  		 		destination.alt*METERS_PER_FOOT, LR.eps_dielect,
-				LR.sgm_conductivity, LR.eno_ns_surfref, LR.frq_mhz,
-				LR.radio_climate, LR.pol, LR.conf, LR.rel, loss,
-				strmode, errnum);
+				point_to_point_ITM(
+                    elev,
+                    source.alt*METERS_PER_FOOT,
+  		 		    destination.alt*METERS_PER_FOOT,
+                    LR.eps_dielect,
+				    LR.sgm_conductivity,
+                    LR.eno_ns_surfref,
+                    LR.frq_mhz,
+				    LR.radio_climate,
+                    LR.pol,
+                    LR.conf,
+                    LR.rel,
+                    loss,
+				    strmode,
+                    errnum
+                );
 
 			else
 				point_to_point(elev,source.alt*METERS_PER_FOOT,
