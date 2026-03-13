@@ -78,7 +78,7 @@ struct prop_type
 	double tsgh;
 	double thera;
 	double thenr;
-	int rpl;	
+	int rpl;
 	int kwx;
 	int mdp;
 	int ptx;
@@ -198,7 +198,7 @@ double h0f(double r, double et)
 	double a[5]={25.0, 80.0, 177.0, 395.0, 705.0};
 	double b[5]={24.0, 45.0,  68.0,  80.0, 105.0};
 	double q, x;
-	double h0fv, temp; 
+	double h0fv, temp;
 	int it;
 
 	it=(int)et;
@@ -257,21 +257,21 @@ double abq_alos(complex<double> r)
 
 double saalos(double d, prop_type &prop, propa_type &propa)
 {
-	double ensa, encca, q, dp, dx, tde, hc, ucrpc, ctip, tip, tic, stic, ctic, sta;	
+	double ensa, encca, q, dp, dx, tde, hc, ucrpc, ctip, tip, tic, stic, ctic, sta;
 	double ttc, cttc, crpc, ssnps, d1a, rsp, tsp, arte, zi, pd, pdk, hone, tvsr;
 	double saalosv=0.0;
-	
+
 	q=0.0;
 
 	if (d==0.0)
 	{
-		tsp=1.0;	
+		tsp=1.0;
 		rsp=0.0;
 		d1a=50.0;
 		saalosv=0.0;
 	}
 	else if(prop.hg[1] > prop.cch)
-	{	
+	{
 		saalosv=0.0;
 	}
 	else
@@ -281,16 +281,16 @@ double saalos(double d, prop_type &prop, propa_type &propa)
 	tsp=1.0;
 	rsp=0.0;
 	d1a=pd;
-	/* at first, hone is transmitter antenna height 
+	/* at first, hone is transmitter antenna height
 	  relative to receive site ground level. */
-	hone=prop.tgh+prop.tsgh-(prop.rch[1]-prop.hg[1]);  
-				
-		if(prop.tgh>prop.cch)  /* for TX ant above all clutter height*/	
+	hone=prop.tgh+prop.tsgh-(prop.rch[1]-prop.hg[1]);
+
+		if(prop.tgh>prop.cch)  /* for TX ant above all clutter height*/
 		{
-			ensa=1+prop.ens*0.000001;	
+			ensa=1+prop.ens*0.000001;
 			encca=1+prop.encc*0.000001;
 			dp=pd;
-				
+
 			for (int j=0; j<5; ++j)
 			{
 				tde=dp/6378137.0;
@@ -310,19 +310,19 @@ double saalos(double d, prop_type &prop, propa_type &propa)
 				{
 					crpc=dp-1/dp;
 				}
-			
+
 				ssnps=(3.1415926535897/2)-tic;
 				d1a=(crpc*sin(ttc))/(1-1/6378137.0);
 				dp=pd-d1a;
-				
+
 			}
-			
+
 			ctic=cos(tic);
 
 			/* if the ucrpc path touches the canopy before reaching the
 			   end of the ucrpc, the entry point moves toward the
 			   transmitter, extending the crpc and d1a. Estimating the d1a: */
-					
+
 			if(ssnps<=0.0)
 			{
 				d1a=mymin(0.1*pd,600.0);
@@ -331,22 +331,22 @@ double saalos(double d, prop_type &prop, propa_type &propa)
 				   the canopy height with respect to the receiver
 				    canopy height, which despite the earth curvature
 				    is at or above the transmitter antenna height. */
-				hone=prop.cch+1;		   
+				hone=prop.cch+1;
 				rsp=.997;
 				tsp=1-rsp;
 			}
-			else			
+			else
 			{
 
-				if (prop.ptx>=1)  /* polarity ptx is vertical or circular */			
+				if (prop.ptx>=1)  /* polarity ptx is vertical or circular */
 				{
 					q=((ensa*cttc-encca*ctic)/(ensa*cttc+encca*ctic));
 					rsp=q*q;
 					tsp=1-rsp;
-			
+
 					if (prop.ptx==2)  /* polarity is circular - new */
-					{	
-						q=((ensa*ctic-encca*cttc)/(ensa*ctic+encca*cttc));	
+					{
+						q=((ensa*ctic-encca*cttc)/(ensa*ctic+encca*cttc));
 						rsp=((ensa*cttc-encca*ctic)/(ensa*cttc+encca*ctic));
 						rsp=(q*q+rsp*rsp)/2;
 						tsp=1-rsp;
@@ -360,38 +360,38 @@ double saalos(double d, prop_type &prop, propa_type &propa)
 				}
 			}
 			/* tvsr is defined as tx ant height above receiver ant height */
-			tvsr= mymax(0.0,prop.tgh+prop.tsgh-prop.rch[1]);  
+			tvsr= mymax(0.0,prop.tgh+prop.tsgh-prop.rch[1]);
 
 			if (d1a<50.0)
 			{
 				arte=0.0195*crpc-20*log10(tsp);
 			}
-			
+
 			else
 			{
 				if (d1a<225.0)
 				{
 
 					if (tvsr>1000.0)
-					{	
+					{
 						q=d1a*(0.03*exp(-0.14*pdk));
 					}
-					else 
+					else
 					{
 						q=d1a*(0.07*exp(-0.17*pdk));
 					}
-			
+
 				arte=q+(0.7*pdk-mymax(0.01,log10(prop.wn*47.7)-2))*(prop.hg[1]/hone);
 				}
-	
-				else	
+
+				else
 				{
 					q=0.00055*(pdk)+log10(pdk)*(0.041-0.0017*sqrt(hone)+0.019);
 
 				     	arte=d1a*q-(18*log10(rsp))/(exp(hone/37.5));
 
 					zi=1.5*sqrt(hone-prop.cch);
-					
+
 					if(pdk>zi)
 					{
 						q=(pdk-zi)*10.2*((sqrt(mymax(0.01,log10(prop.wn*47.7)-2.0)))/(100-zi));
@@ -401,9 +401,9 @@ double saalos(double d, prop_type &prop, propa_type &propa)
 						q=((zi-pdk)/zi)*(-20.0*mymax(0.01,log10(prop.wn*47.7)-2.0))/sqrt(hone);
 					}
 					arte=arte+q;
-					
-				}					
-			}										
+
+				}
+			}
 		}
 		else  /* for TX at or below clutter height */
 		{
@@ -415,7 +415,7 @@ double saalos(double d, prop_type &prop, propa_type &propa)
 		saalosv=arte;
 	}
 	return saalosv;
-}			
+}
 
 
 double adiff(double d, prop_type &prop, propa_type &propa)
@@ -478,14 +478,14 @@ double adiff(double d, prop_type &prop, propa_type &propa)
 double adiff2(double d, prop_type &prop, propa_type &propa)
 {
 	complex<double> prop_zgnd(prop.zgndreal,prop.zgndimag);
-	static double wd1, xd1, qk, aht, xht, toh, toho, roh, roho, dto, dto1, dtro, dro, 
+	static double wd1, xd1, qk, aht, xht, toh, toho, roh, roho, dto, dto1, dtro, dro,
 	dro2, drto, dtr, dhh1, dhh2, /* dhec, */ dtof, dto1f, drof, dro2f;
 	double a, q, pk, rd, ds, dsl, /* dfdh, */ th, wa, /* ar, wd, sf1, */ sf2, /* ec, */ vv, kedr=0.0, arp=0.0,
 	sdr=0.0, pd=0.0, srp=0.0, kem=0.0, csd=0.0, sdl=0.0, adiffv2=0.0, closs=0.0;
 
 	/* sf1=1.0; */ /* average empirical hilltop foliage scatter factor for 1 obstruction  */
 	sf2=1.0;  /* average empirical hilltop foliage scatter factor for 2 obstructions */
-	
+
 	/* dfdh=prop.dh; */
 	/* ec=0.5*prop.gme; */
 
@@ -498,7 +498,7 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 
 		if (prop.mdp<0.0)
 			q+=10.0;
-		
+
 		/* coefficients for a standard four radii, rounded earth computation are prepared */
 		wd1=sqrt(1.0+qk/q);
 		xd1=propa.dla+propa.tha/prop.gme;
@@ -513,14 +513,14 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 		q=(1.607-pk)*151.0*wa*prop.dl[0]/a;
 		xht=q;
 		aht+=fht(q,pk);
-						
+
 
 		if ((int(prop.dl[1])==0.0) || (prop.the[1]>0.2))
-		{ 
+		{
 			xht+=xht;
 			aht+=(aht-20.0);
 		}
-		
+
 		else
 		{
 			a=0.5*(prop.dl[1]*prop.dl[1])/prop.he[1];
@@ -536,19 +536,19 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
  	else
 	{
 		th=propa.tha+d*prop.gme;
-		
+
 		dsl=mymax(d-propa.dla,0.0);
 		ds=d-propa.dla;
 		a=ds/th;
 		wa=pow(a*prop.wn,THIRD);
 		pk=qk/wa;
-		toh=prop.hht-(prop.rch[0]-prop.dl[0]*((prop.rch[1]-prop.rch[0])/prop.dist));		
-		roh=prop.hhr-(prop.rch[0]-(prop.dist-prop.dl[1])*((prop.rch[1]-prop.rch[0])/prop.dist));		
-		toho=prop.hht-(prop.rch[0]-(prop.dl[0]+dsl)*((prop.hhr-prop.rch[0])/(prop.dist-prop.dl[1])));		
-		roho=prop.hhr-(prop.hht-dsl*((prop.rch[1]-prop.hht)/dsl));	
-		dto=sqrt(prop.dl[0]*prop.dl[0]+toh*toh);		
+		toh=prop.hht-(prop.rch[0]-prop.dl[0]*((prop.rch[1]-prop.rch[0])/prop.dist));
+		roh=prop.hhr-(prop.rch[0]-(prop.dist-prop.dl[1])*((prop.rch[1]-prop.rch[0])/prop.dist));
+		toho=prop.hht-(prop.rch[0]-(prop.dl[0]+dsl)*((prop.hhr-prop.rch[0])/(prop.dist-prop.dl[1])));
+		roho=prop.hhr-(prop.hht-dsl*((prop.rch[1]-prop.hht)/dsl));
+		dto=sqrt(prop.dl[0]*prop.dl[0]+toh*toh);
 		dto+=prop.gme*prop.dl[0];
-		dto1=sqrt(prop.dl[0]*prop.dl[0]+toho*toho);		
+		dto1=sqrt(prop.dl[0]*prop.dl[0]+toho*toho);
 		dto1+=prop.gme*prop.dl[0];
 		dtro=sqrt((prop.dl[0]+dsl)*(prop.dl[0]+dsl)+prop.hhr*prop.hhr);
 		dtro+=prop.gme*(prop.dl[0]+dsl);
@@ -566,9 +566,9 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 		dhh2+=prop.gme*(prop.dist-propa.dla);
 
 		/* for 1 obst tree base path */
-		dtof=sqrt(prop.dl[0]*prop.dl[0]+(toh-prop.cch)*(toh-prop.cch));		
+		dtof=sqrt(prop.dl[0]*prop.dl[0]+(toh-prop.cch)*(toh-prop.cch));
 		dtof+=prop.gme*prop.dl[0];
-		dto1f=sqrt(prop.dl[0]*prop.dl[0]+(toho-prop.cch)*(toho-prop.cch));		
+		dto1f=sqrt(prop.dl[0]*prop.dl[0]+(toho-prop.cch)*(toho-prop.cch));
 		dto1f+=prop.gme*prop.dl[0];
 		drof=sqrt(prop.dl[1]*prop.dl[1]+(roh-prop.cch)*(roh-prop.cch));
 		drof+=prop.gme*(prop.dl[1]);
@@ -579,9 +579,9 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 		prop.tgh=prop.cch+1.0;
 		prop.tsgh=prop.hhr;
 		rd=prop.dl[1];
-	
-		/* two obstacle diffraction calculation */ 
-		if (int(ds)>0)   /* there are 2 obstacles */ 
+
+		/* two obstacle diffraction calculation */
+		if (int(ds)>0)   /* there are 2 obstacles */
 		{
 			if(int(prop.dl[1])>0.0) /* receive site past 2nd peak */
 			{
@@ -590,11 +590,11 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 					/* ar=0.05751*q-10*log10(q)-aht; */
 
 					/* knife edge vs round weighting */
-					q=(1.0-0.8*exp(-d/50e3))*prop.dh;	
+					q=(1.0-0.8*exp(-d/50e3))*prop.dh;
 					q=(wd1+xd1/d)*mymin((q*prop.wn),6283.2);
 					/* wd=25.1/(25.1+sqrt(q)); */
-	
-					q=0.6365*prop.wn;			
+
+					q=0.6365*prop.wn;
 
 				if(prop.the[1]<0.2)  /* receive grazing angle below 0.2 rad */
 				{
@@ -607,7 +607,7 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 					}
 					else
 					{
-						vv=q*abs(dto1+dhh1-dtro);					
+						vv=q*abs(dto1+dhh1-dtro);
 						adiffv2=aknfe(vv);
 					}
 
@@ -618,16 +618,16 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 					}
 					else
 					{
-						vv=q*abs(dro2+dhh2-drto);					
+						vv=q*abs(dro2+dhh2-drto);
 						adiffv2+=aknfe(vv);
 					}
-					/* finally, add clutter loss */					
-					closs=saalos(rd, prop, propa);  
-					adiffv2+=mymin(22.0,closs); 
+					/* finally, add clutter loss */
+					closs=saalos(rd, prop, propa);
+					adiffv2+=mymin(22.0,closs);
 
  				}
 				else	 /* rcvr site too close to 2nd obs */
-				{	
+				{
 					/* knife edge attenuation for 1st obs */
 
 					if(prop.hht < 3400)
@@ -636,12 +636,12 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 						adiffv2=-18.0+sf2*aknfe(vv);
 					}
 					else
-					{	
+					{
 						vv=q*abs(dto1+dhh1-dtro);
 						adiffv2=aknfe(vv);
 					}
 
-					/* weighted calc. of knife vs rounded edge 
+					/* weighted calc. of knife vs rounded edge
 					 adiffv2=ar*wd+(1.0-wd)*adiffv2; */
 
 					/* clutter path loss past 2nd peak */
@@ -659,7 +659,7 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 						}
 						adiffv2+=aknfe(vv);
 						closs=saalos(rd, prop, propa);
-						adiffv2+=mymin(closs,22.0); 
+						adiffv2+=mymin(closs,22.0);
 					}
 					else	/* rcvr very close to bare cliff or skyscraper */
 					{
@@ -668,7 +668,7 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 				}
 			}
 			else /* receive site is atop a 2nd peak */
-			{			
+			{
 				vv=0.6365*prop.wn*abs(dto+dro-dtr);
 				adiffv2=5.8 + aknfe(vv);
 			}
@@ -697,30 +697,30 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 						srp=abs(sdr-(int(sdr)));
 						/* difference between scatter and ke phase in radians */
 						pd=6.283185307*abs(srp-arp);
-						/* report pd prior to restriction 
-						   keep pd between 0 and pi radians and adjust for 3&4 quadrant */ 
+						/* report pd prior to restriction
+						   keep pd between 0 and pi radians and adjust for 3&4 quadrant */
 						if(pd>=3.141592654)
 						{
 							pd=6.283185307-pd;
-							csd=abq_alos(complex<double>(sdl,0)+complex<double>(kem*-cos(pd), kem*-sin(pd))); 
-						} 
-						else						
+							csd=abq_alos(complex<double>(sdl,0)+complex<double>(kem*-cos(pd), kem*-sin(pd)));
+						}
+						else
 						{
-							csd=abq_alos(complex<double>(sdl,0)+complex<double>(kem*cos(pd), kem*sin(pd))); 
+							csd=abq_alos(complex<double>(sdl,0)+complex<double>(kem*cos(pd), kem*sin(pd)));
 						}
 						/*csd=mymax(csd,0.0009); limits maximum loss value to 30.45 db */
 						adiffv2=-3.71-10*log10(csd);
 					}
 					else
 					{
-						adiffv2=aknfe(vv);	
+						adiffv2=aknfe(vv);
 					}
 					/* finally, add clutter loss */
 					closs=saalos(rd, prop, propa);
-					adiffv2+=mymin(closs,22.0);   
+					adiffv2+=mymin(closs,22.0);
 				}
 				else	/* receive grazing angle too high */
-				{	
+				{
 					if(prop.the[1]<1.22)
 					{
 						rd=prop.dl[1];
@@ -728,14 +728,14 @@ double adiff2(double d, prop_type &prop, propa_type &propa)
 						if(prop.the[1]>0.6)  /* through foliage downhill */
 						{
 							prop.tgh=prop.cch;
-						}							
+						}
 						else	/* downhill slope just above foliage  */
 						{
 							vv=0.6365*prop.wn*abs(dto+dro-dtr);
-							adiffv2=aknfe(vv);	
+							adiffv2=aknfe(vv);
 						}
 						closs=saalos(rd, prop, propa);
-						adiffv2+=mymin(22.0,closs); 
+						adiffv2+=mymin(22.0,closs);
 					}
 					else	/* receiver very close to bare cliff or skyscraper */
 					{
@@ -821,7 +821,7 @@ double ascat( double d, prop_type &prop, propa_type &propa)
 		/* ascatv=ahd(th*d)+4.343*log(47.7*prop.wn*pow(th,4.0))-0.1*(prop.ens-301.0)*exp(-th*d/40e3)+h0; */
 		ascatv=ahd(th*d)+4.343*log(47.7*prop.wn*(th*th*th*th))-0.1*(prop.ens-301.0)*exp(-th*d/40e3)+h0;
 	}
-	
+
 	return ascatv;
 }
 
@@ -863,10 +863,10 @@ void qlrps(double fmhz, double zsys, double en0, int ipol, double eps, double sg
 
 	if (ipol!=0.0)
 		prop_zgnd=prop_zgnd/zq;
-	
+
 	prop.zgndreal=prop_zgnd.real();
 	prop.zgndimag=prop_zgnd.imag();
-	
+
 }
 
 double alos(double d, prop_type &prop, propa_type &propa)
@@ -915,7 +915,7 @@ double alos2(double d, prop_type &prop, propa_type &propa)
 	double cd, cr, dr, hr, hrg, ht, htg, hrp, re, s, sps, q, pd, drh;
 	/* int rp; */
 	double alosv;
-	
+
 	cd=0.0;
 	cr=0.0;
 	htg=prop.hg[0];
@@ -936,46 +936,46 @@ double alos2(double d, prop_type &prop, propa_type &propa)
 		q=prop.he[0]+prop.he[1];
 		sps=q/sqrt(pd*pd+q*q);
 		q=(1.0-0.8*exp(-pd/50e3))*prop.dh;
-		
+
 		if (prop.mdp<0)
 		{
 			dr=pd/(1+hrg/htg);
-			
+
 			if (dr<(0.5*pd))
 			{
-				drh=6378137.0-sqrt(-(0.5*pd)*(0.5*pd)+6378137.0*6378137.0+(0.5*pd-dr)*(0.5*pd-dr));  
+				drh=6378137.0-sqrt(-(0.5*pd)*(0.5*pd)+6378137.0*6378137.0+(0.5*pd-dr)*(0.5*pd-dr));
 			}
 			else
 			{
-				drh=6378137.0-sqrt(-(0.5*pd)*(0.5*pd)+6378137.0*6378137.0+(dr-0.5*pd)*(dr-0.5*pd));  
+				drh=6378137.0-sqrt(-(0.5*pd)*(0.5*pd)+6378137.0*6378137.0+(dr-0.5*pd)*(dr-0.5*pd));
 			}
-					
-			if ((sps<0.05) && (prop.cch>hrg) && (prop.dist< prop.dl[0])) /* if far from transmitter and receiver below canopy */  
+
+			if ((sps<0.05) && (prop.cch>hrg) && (prop.dist< prop.dl[0])) /* if far from transmitter and receiver below canopy */
 			{
 				cd=mymax(0.01,pd*(prop.cch-hrg)/(htg-hrg));
 				cr=mymax(0.01,pd-dr+dr*(prop.cch-drh)/htg);
-				q=((1.0-0.8*exp(-pd/50e3))*prop.dh*(mymin(-20*log10(cd/cr),1.0)));	
+				q=((1.0-0.8*exp(-pd/50e3))*prop.dh*(mymin(-20*log10(cd/cr),1.0)));
 			}
 		}
-	
+
 		s=0.78*q*exp(-pow(q/16.0,0.25));
 		q=exp(-mymin(10.0,prop.wn*s*sps));
 		r=q*(sps-prop_zgnd)/(sps+prop_zgnd);
 		q=abq_alos(r);
-		q=mymin(q,1.0);		
-	
+		q=mymin(q,1.0);
+
 		if (q<0.25 || q<sps)
 		{
 			r=r*sqrt(sps/q);
-		}	
-		q=prop.wn*prop.he[0]*prop.he[1]/(pd*3.1415926535897);		
-			
-		if (prop.mdp<0)	
-		{		
+		}
+		q=prop.wn*prop.he[0]*prop.he[1]/(pd*3.1415926535897);
+
+		if (prop.mdp<0)
+		{
 			q=prop.wn*((ht-hrp)*(hr-hrp))/(pd*3.1415926535897);
 		}
 		q-=floor(q);
-		
+
 			if (q<0.5)
 			{
 				q*=3.1415926535897;
@@ -983,21 +983,21 @@ double alos2(double d, prop_type &prop, propa_type &propa)
 
 			else
 			{
-				q=(1-q)*3.1415926535897;		
+				q=(1-q)*3.1415926535897;
 			}
-		/* no longer valid complex conjugate removed 
+		/* no longer valid complex conjugate removed
 		   by removing minus sign from in front of sin function */
 		re=abq_alos(complex<double>(cos(q),sin(q))+r);
 		alosv=-10*log10(re);
-		prop.tgh=prop.hg[0];  /*tx above gnd hgt set to antenna height AGL */	
-		prop.tsgh=prop.rch[0]-prop.hg[0]; /* tsgh set to tx site gl AMSL */		
-							
+		prop.tgh=prop.hg[0];  /*tx above gnd hgt set to antenna height AGL */
+		prop.tsgh=prop.rch[0]-prop.hg[0]; /* tsgh set to tx site gl AMSL */
+
 		if ((prop.hg[1]<prop.cch) && (prop.thera<0.785) && (prop.thenr<0.785))
-		{					
+		{
 			if (sps<0.05)
-			{			
+			{
 				alosv=alosv+saalos(pd, prop, propa);
-			}					
+			}
 			else
 			{
 				alosv=saalos(pd, prop, propa);
@@ -1036,7 +1036,7 @@ void qlra(int kst[], int klimx, int mdvarx, prop_type &prop, propv_type &propv)
 
 	prop.mdp=1;
 	propv.lvar=mymax(propv.lvar,3);
-  
+
 	if (mdvarx>=0)
 	{
 		propv.mdvar=mdvarx;
@@ -1151,7 +1151,7 @@ void lrprop (double d, prop_type &prop, propa_type &propa)
 				wq=propa.aed>=0.0 || propa.ak2>0.0;
 
 				if (wq)
-				{ 
+				{
 					propa.ak1=(a2-a0-propa.ak2*q)/(d2-d0);
 
 					if (propa.ak1<0.0)
@@ -1173,7 +1173,7 @@ void lrprop (double d, prop_type &prop, propa_type &propa)
 						propa.ak1=propa.emd;
 				}
 			}
-	
+
 			else
 			{
 				propa.ak1=(a2-a1)/(d2-d1);
@@ -1195,7 +1195,7 @@ void lrprop (double d, prop_type &prop, propa_type &propa)
 	if (prop.dist<=0.0 || prop.dist>=propa.dlsa)
 	{
 		if(!wscat)
-		{ 
+		{
 			q=ascat(0.0,prop,propa);
 			d5=propa.dla+200e3;
 			d6=d5+200e3;
@@ -1237,7 +1237,7 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 	static bool wlos, wscat;
 	static double dmin, xae;
 	complex<double> prop_zgnd(prop.zgndreal,prop.zgndimag);
-	double pd1;	
+	double pd1;
 	double a0, a1, a2, a3, a4, a5, a6, iw;
 	double d0, d1, d2, d3, d4, d5, d6;
 	bool wq;
@@ -1247,16 +1247,16 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 	iw=prop.tiw;
 	pd1=prop.dist;
 	propa.dx=2000000.0;
-		
+
 	if (prop.mdp!=0) /* if oper. mode is not 0, i.e. not area mode ongoing */
   	{
 		for (j=0; j<2; j++)
 			propa.dls[j]=sqrt(2.0*prop.he[j]/prop.gme);
-	
+
 		propa.dlsa=propa.dls[0]+propa.dls[1];
 		propa.dlsa=mymin(propa.dlsa,1000000.0);
-		propa.dla=prop.dl[0]+prop.dl[1];	
-		propa.tha=mymax(prop.the[0]+prop.the[1],-propa.dla*prop.gme);		
+		propa.dla=prop.dl[0]+prop.dl[1];
+		propa.tha=mymax(prop.the[0]+prop.the[1],-propa.dla*prop.gme);
 		wlos=false;
 		wscat=false;
 
@@ -1268,7 +1268,7 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 		for (j=0; j<2; j++)
 			if (prop.hg[j]<1.0 || prop.hg[j]>1000.0)
 				prop.kwx=mymax(prop.kwx,1);
-		
+
 		if(abs(prop.the[0])>200e-3)
 			prop.kwx=mymax(prop.kwx,3);
 
@@ -1283,13 +1283,13 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 			prop.kwx=4;
 
 		for (j=0; j<2; j++)
-		
+
 			if (prop.hg[j]<0.5 || prop.hg[j]>3000.0)
 				prop.kwx=4;
 
 		dmin=abs(prop.he[0]-prop.he[1])/200e-3;
 		q=adiff2(0.0,prop,propa);
-		xae=pow(prop.wn*(prop.gme*prop.gme),-THIRD);  
+		xae=pow(prop.wn*(prop.gme*prop.gme),-THIRD);
 		d3=mymax(propa.dlsa,1.3787*xae+propa.dla);
 		d4=d3+2.7574*xae;
 		a3=adiff2(d3,prop,propa);
@@ -1318,10 +1318,10 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 
 	if (prop.dist<propa.dlsa)
 	{
-	
+
 		if (iw<=0.0)   /* if interval width is zero or less, used for area mode */
 		{
-		
+
 			if (!wlos)
 			{
 				q=alos2(0.0,prop,propa);
@@ -1330,7 +1330,7 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 				d0=1.908*prop.wn*prop.he[0]*prop.he[1];
 
 				if (propa.aed>0.0)
-				{	
+				{
 					prop.aref=propa.aed+propa.emd*prop.dist;
 				}
 				else
@@ -1356,7 +1356,7 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 						wq=propa.aed>=0.0 || propa.ak2>0.0;
 
 						if (wq)
-						{ 
+						{
 						propa.ak1=(a2-a0-propa.ak2*q)/(d2-d0);
 
 							if (propa.ak1<0.0)
@@ -1371,25 +1371,25 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 					}
 
 					if(!wq)
-					{       
+					{
 						propa.ak1=FORTRAN_DIM(a2,a1)/(d2-d1);
 						propa.ak2=0.0;
 
 						if (propa.ak1==0.0)
 							propa.ak1=propa.emd;
-						
+
 					}
 					propa.ael=a2-propa.ak1*d2-propa.ak2*log(d2);
 					wlos=true;
 				}
 			}
-		}		
-		else	/* for ITWOM point-to-point mode */	
-		{		
+		}
+		else	/* for ITWOM point-to-point mode */
+		{
 
 			if (!wlos)
 			{
-				q=alos2(0.0,prop,propa); /* coefficient setup */	
+				q=alos2(0.0,prop,propa); /* coefficient setup */
 				wlos=true;
 			}
 
@@ -1398,7 +1398,7 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 				prop.aref=alos2(pd1,prop,propa);
 			}
 			else
-			{			
+			{
 			 	if (int(prop.dist-prop.dl[0])==0)  /* if at 1st horiz */
 				{
 				prop.aref=5.8+alos2(pd1,prop,propa);
@@ -1407,14 +1407,14 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 				{
 				q=adiff2(0.0,prop,propa);
 				prop.aref=adiff2(pd1,prop,propa);
-				}			
+				}
 				else
 				{
 				prop.aref=1.0;
 				}
 
 			}
-		}	
+		}
 	}
 
 	/* los and diff. range coefficents done. Starting troposcatter */
@@ -1423,21 +1423,21 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 		if (iw==0.0)  /* area mode */
 		{
 			if(!wscat)
-			{ 
+			{
 				q=ascat(0.0,prop,propa);
 				d5=propa.dla+200e3;
 				d6=d5+200e3;
 				a6=ascat(d6,prop,propa);
 				a5=ascat(d5,prop,propa);
-			
+
 				if (a5<1000.0)
 				{
 					propa.ems=(a6-a5)/200e3;
 					propa.dx=mymax(propa.dlsa,mymax(propa.dla+0.3*xae*log(47.7*prop.wn),(a5-propa.aed-propa.ems*d5)/(propa.emd-propa.ems)));
-					
+
 					propa.aes=(propa.emd-propa.ems)*propa.dx+propa.aed;
 				}
-	
+
 				else
 				{
 					propa.ems=propa.emd;
@@ -1445,8 +1445,8 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 					propa.dx=10000000;
 				}
 				wscat=true;
-				}	
-	
+				}
+
 			if (prop.dist>propa.dx)
 			{
 				prop.aref=propa.aes+propa.ems*prop.dist;
@@ -1455,20 +1455,20 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 			{
 				prop.aref=propa.aed+propa.emd*prop.dist;
 			}
-		}	
+		}
 		else   /* ITWOM mode  q used to preset coefficients with zero input */
-		{				
+		{
 			if(!wscat)
-			{ 
+			{
 				d5=0.0;
 				d6=0.0;
 				q=ascat(0.0,prop,propa);
 				a6=ascat(pd1,prop,propa);
-				q=adiff2(0.0,prop,propa);			
+				q=adiff2(0.0,prop,propa);
 				a5=adiff2(pd1,prop,propa);
-							
+
 				if (a5<=a6)
-				{		
+				{
 					propa.dx=10000000;
 					prop.aref=a5;
 				}
@@ -1478,7 +1478,7 @@ void lrprop2(double d, prop_type &prop, propa_type &propa)
 					prop.aref=a6;
 				}
 			wscat=true;
-			}			
+			}
 		}
 	}
 	prop.aref=mymax(prop.aref,0.0);
@@ -1706,9 +1706,50 @@ double avar(double zzt, double zzl, double zzc, prop_type &prop, propv_type &pro
 	return avarv;
 }
 
+void hzns_fast(double pfl[], prop_type &prop) {
+	int np;
+	double xi, za, zb, qc, q, sb, sa;
+
+	np=(int)pfl[0];
+	xi=pfl[1];
+	za=pfl[2]+prop.hg[0];
+	zb=pfl[np+2]+prop.hg[1];
+	qc=0.5*prop.gme;
+	q=qc*prop.dist;
+	prop.the[1]=(zb-za)/prop.dist;
+	prop.the[0]=prop.the[1]-q;
+	prop.the[1]=-prop.the[1]-q;
+	prop.dl[0]=prop.dist;
+	prop.dl[1]=prop.dist;
+
+	if (np>=2)
+	{
+		sa=0.0;
+		sb=prop.dist;
+
+		for (int i=1; i<np; i++)
+		{
+			sa+=xi;
+			sb-=xi;
+			q=pfl[i+2]-(qc*sa+prop.the[0])*sa-za;
+
+            bool cond = (q > 0.0);
+            prop.the[0] += cond*(q/sa);
+            prop.dl[0] = cond*sa + (!cond)*prop.dl[0];
+
+			q=pfl[i+2]-(qc*sb+prop.the[1])*sb-zb;
+
+            cond = (q > 0.0);
+            prop.the[1] += cond*(q/sb);
+            prop.dl[1] = cond*sb + (!cond)*prop.dl[1];
+
+		}
+	}
+}
+
 
 void hzns(double pfl[], prop_type &prop)
-{	
+{
 	/* Used only with ITM 1.2.2 */
 	bool wq;
 	int np;
@@ -1758,7 +1799,7 @@ void hzns(double pfl[], prop_type &prop)
 		}
 	}
 }
- 
+
 
 void hzns2(double pfl[], prop_type &prop, propa_type &propa)
 {
@@ -1783,7 +1824,7 @@ void hzns2(double pfl[], prop_type &prop, propa_type &propa)
 	prop.hht=0.0;
 	prop.hhr=0.0;
 	prop.los=1;
-    	
+
 	if(np>=2)
 	{
 		sa=0.0;
@@ -1794,20 +1835,20 @@ void hzns2(double pfl[], prop_type &prop, propa_type &propa)
 		{
 			sa+=xi;
 			q=pfl[j+2]-(qc*sa+prop.the[0])*sa-za;
-          		
+
 			if(q>0.0)
 			{
 				prop.los=0;
 				prop.the[0]+=q/sa;
 				prop.dl[0]=sa;
 				prop.the[0]=mymin(prop.the[0],1.569);
-				prop.hht=pfl[j+2];				
+				prop.hht=pfl[j+2];
 				wq=false;
 			}
 		}
-		
+
 		if(!wq)
-		{				
+		{
 			for(i=1; i<np; i++)
 			{
 				sb-=xi;
@@ -1816,8 +1857,8 @@ void hzns2(double pfl[], prop_type &prop, propa_type &propa)
 				{
 					prop.the[1]+=q/(prop.dist-sb);
 					prop.the[1]=mymin(prop.the[1],1.57);
-					prop.the[1]=mymax(prop.the[1],-1.568);					
-					prop.hhr=pfl[np+2-i];					
+					prop.the[1]=mymax(prop.the[1],-1.568);
+					prop.hhr=pfl[np+2-i];
 					prop.dl[1]=mymax(0.0,prop.dist-sb);
 				}
 			}
@@ -1832,23 +1873,23 @@ void hzns2(double pfl[], prop_type &prop, propa_type &propa)
 
 		if(int(dshh)==0) /* one obstacle */
 		{
-			dr=prop.dl[1]/(1+zb/prop.hht);		
+			dr=prop.dl[1]/(1+zb/prop.hht);
 		}
 		else	/* two obstacles */
-		{		
-			dr=prop.dl[1]/(1+zb/prop.hhr);		
-		}	
+		{
+			dr=prop.dl[1]/(1+zb/prop.hhr);
+		}
 	}
 	else    /* line of sight  */
 	{
 		dr=(prop.dist)/(1+zb/za);
 	}
 	rp=2+(int)(floor(0.5+dr/xi));
-	prop.rpl=rp;	
+	prop.rpl=rp;
 	prop.rph=pfl[rp];
 }
 
-  
+
 void z1sq1 (double z[], const double &x1, const double &x2, double& z0, double& zn)
 {
 	/* Used only with ITM 1.2.2 */
@@ -1897,7 +1938,7 @@ void z1sq2(double z[], const double &x1, const double &x2, double& z0, double& z
 	xn=z[0];
 	xa=int(FORTRAN_DIM(x1/z[1],0.0));
 	xb=xn-int(FORTRAN_DIM(xn,x2/z[1]));
-		
+
 	if (xb<=xa)
 	{
 		xa=FORTRAN_DIM(xa,1.0);
@@ -1914,7 +1955,7 @@ void z1sq2(double z[], const double &x1, const double &x2, double& z0, double& z
 	a=(z[ja+2]+z[jb+2]);
 	b=(z[ja+2]-z[jb+2])*x;
 	bn=2*(x*x);
-	
+
 	for (int i=2; i<=n; ++i)
 	{
 		++ja;
@@ -2052,11 +2093,12 @@ double d1thx(double pfl[], const double &x1, const double &x2)
 
 	for (j=0; j<n; j++)
 	{
-		while (xa>0.0 && k<np)
-		{
-			xa-=1.0;
-			++k;
-		}
+
+        if (xa > 0.0 && k<np) {
+            int incr = mymin(int(np - k), int(xa) + 1);
+            xa -= incr;
+            k += incr;
+        }
 
 		s[j+2]=pfl[k+2]+(pfl[k+2]-pfl[k+1])*xa;
 		xa=xa+xb;
@@ -2105,7 +2147,7 @@ double d1thx2(double pfl[], const double &x1, const double &x2, propa_type &prop
 	xb=(xb-xa)/sn;
 	k=(int(xa+1.0));
 	xc=xa-(double(k));
-	
+
 	for (j=0; j<n; j++)
 	{
 		while (xc>0.0 && k<np)
@@ -2113,14 +2155,14 @@ double d1thx2(double pfl[], const double &x1, const double &x2, propa_type &prop
 			xc-=1.0;
 			++k;
 		}
-	
-		s[j+2]=pfl[k+2]+(pfl[k+2]-pfl[k+1])*xc; 
+
+		s[j+2]=pfl[k+2]+(pfl[k+2]-pfl[k+1])*xc;
 		xc=xc+xb;
 	}
 
 	z1sq2(s,0.0,sn,xa,xb);
 	xb=(xb-xa)/sn;
-	
+
 	for (j=0; j<n; j++)
 	{
 		s[j+2]-=xa;
@@ -2141,7 +2183,7 @@ void qlrpfl(double pfl[], int klimx, int mdvarx, prop_type &prop, propa_type &pr
 
 	prop.dist=pfl[0]*pfl[1];
 	np=(int)pfl[0];
-	hzns(pfl,prop);
+	hzns_fast(pfl, prop);
 
 	for (j=0; j<2; j++)
 		xl[j]=mymin(15.0*prop.hg[j],0.1*prop.dl[j]);
@@ -2223,36 +2265,36 @@ void qlrpfl2(double pfl[], int klimx, int mdvarx, prop_type &prop, propa_type &p
 
 	xl[1]=prop.dist-xl[1];
 	prop.dh=d1thx2(pfl,xl[0],xl[1],propa);
-	
+
 	if ((np<1) || (pfl[1]>150.0))
 	{
 		/* for TRANSHORIZON; diffraction over a mutual horizon, or for one or more obstructions */
-		if (dlb<1.5*prop.dist)  
-		{	
+		if (dlb<1.5*prop.dist)
+		{
 			z1sq2(pfl,xl[0],0.9*prop.dl[0],za,q);
 			z1sq2(pfl,prop.dist-0.9*prop.dl[1],xl[1],q,zb);
 			prop.he[0]=prop.hg[0]+FORTRAN_DIM(pfl[2],za);
 			prop.he[1]=prop.hg[1]+FORTRAN_DIM(pfl[np+2],zb);
 		}
-		
-		/* for a Line-of-Sight path */		
+
+		/* for a Line-of-Sight path */
 		else
-		{			
+		{
 			z1sq2(pfl,xl[0],xl[1],za,zb);
 			prop.he[0]=prop.hg[0]+FORTRAN_DIM(pfl[2],za);
 			prop.he[1]=prop.hg[1]+FORTRAN_DIM(pfl[np+2],zb);
 
 			for (j=0; j<2; j++)
 				prop.dl[j]=sqrt(2.0*prop.he[j]/prop.gme)*exp(-0.07*sqrt(prop.dh/mymax(prop.he[j],5.0)));
-			
+
 			/* for one or more obstructions only NOTE buried as in ITM FORTRAN and DLL, not functional  */
 			if ((prop.dl[0]+prop.dl[1])<=prop.dist)
-			{	
+			{
 				/* q=pow(prop.dist/(dl[0]+dl[1])),2.0); */
 				temp=prop.dist/(prop.dl[0]+prop.dl[1]);
 				q=temp*temp;
 			}
-			
+
 			for (j=0; j<2; j++)
 			{
 				prop.he[j]*=q;
@@ -2267,14 +2309,14 @@ void qlrpfl2(double pfl[], int klimx, int mdvarx, prop_type &prop, propa_type &p
 			}
 		}
 	}
-			
-	else    /* for ITWOM ,computes he for tx, rcvr, and the receiver approach angles for use in saalos */ 
+
+	else    /* for ITWOM ,computes he for tx, rcvr, and the receiver approach angles for use in saalos */
 	{
 		prop.he[0]=prop.hg[0]+(pfl[2]);
 		prop.he[1]=prop.hg[1]+(pfl[np+2]);
-		
-		rad=(prop.dist-500.0);	
-				
+
+		rad=(prop.dist-500.0);
+
 		if (prop.dist>550.0)
 		{
 			z1sq2(pfl,rad,prop.dist,rae1,rae2);
@@ -2286,16 +2328,16 @@ void qlrpfl2(double pfl[], int klimx, int mdvarx, prop_type &prop, propa_type &p
 		}
 
 		prop.thera=atan(abs(rae2-rae1)/prop.dist);
-		
-		if (rae2<rae1)	
+
+		if (rae2<rae1)
 		{
 			prop.thera=-prop.thera;
 		}
-		
+
 		prop.thenr=atan(mymax(0.0,(pfl[np+2]-pfl[np+1]))/pfl[1]);
-				
-	}	
-	
+
+	}
+
 	prop.mdp=-1;
 	propv.lvar=mymax(propv.lvar,3);
 
@@ -2320,7 +2362,7 @@ double deg2rad(double d)
 }
 
 //***************************************************************************************
-//* Point-To-Point Mode Calculations 
+//* Point-To-Point Mode Calculations
 //***************************************************************************************
 
 
@@ -2328,7 +2370,7 @@ void point_to_point_ITM(double elev[], double tht_m, double rht_m, double eps_di
 
 /******************************************************************************
 
-Note that point_to_point has become point_to_point_ITM for use as the old ITM 
+Note that point_to_point has become point_to_point_ITM for use as the old ITM
 
 	pol:
 		0-Horizontal, 1-Vertical
@@ -2426,15 +2468,15 @@ void point_to_point(double elev[], double tht_m, double rht_m, double eps_dielec
 
 /******************************************************************************
 
-	Note that point_to_point_two has become point_to_point 
-	for drop-in interface to splat.cpp.  
+	Note that point_to_point_two has become point_to_point
+	for drop-in interface to splat.cpp.
 	The new variable inputs,
-	double enc_ncc_clcref, 
-	double clutter_height, 
-	double clutter_density, 
-	double delta_h_diff, and 
+	double enc_ncc_clcref,
+	double clutter_height,
+	double clutter_density,
+	double delta_h_diff, and
 	int mode_var)
-	have been given fixed values below. 
+	have been given fixed values below.
 
 	pol:
 		0-Horizontal, 1-Vertical, 2-Circular
@@ -2458,7 +2500,7 @@ void point_to_point(double elev[], double tht_m, double rht_m, double eps_dielec
 				setting to 0.0 will default to use of original internal
 				use of delta-h for beyond line-of-sight range.
 
-	mode_var		set to 12; or to 1 for FCC ILLR;  see documentation	
+	mode_var		set to 12; or to 1 for FCC ILLR;  see documentation
 
 	enc_ncc_clcref 		clutter refractivity; 1000 N-units to match ITU-R P.1546-2
 
@@ -2509,17 +2551,17 @@ void point_to_point(double elev[], double tht_m, double rht_m, double eps_dielec
 
 	/* PRESET VALUES for Basic Version w/o additional inputs active */
 
-	prop.encc = 1000.00;		/*  double enc_ncc_clcref preset  */          	
-	prop.cch = 22.5;   		/* double clutter_height preset to ILLR calibration.;  
-					   use 25.3 for ITU-P1546-2 calibration */	
-	prop.cd = 1.00;                 /* double clutter_density preset */ 
+	prop.encc = 1000.00;		/*  double enc_ncc_clcref preset  */
+	prop.cch = 22.5;   		/* double clutter_height preset to ILLR calibration.;
+					   use 25.3 for ITU-P1546-2 calibration */
+	prop.cd = 1.00;                 /* double clutter_density preset */
 	int mode_var = 1; 		/* int mode_var set to 1 for FCC compatibility;
 					   normally, SPLAT presets this to 12 */
 	prop.dhd= 0.0;			/* delta_h_diff preset */
 
 	if (q<=0.0)
 	{
-		ja=(long)(3.0+0.1*elev[0]);  
+		ja=(long)(3.0+0.1*elev[0]);
 		jb=np-ja+6;
 
 		for (i=ja-1; i<jb; ++i)
@@ -2533,9 +2575,9 @@ void point_to_point(double elev[], double tht_m, double rht_m, double eps_dielec
 	qlrps(frq_mhz,zsys,q,pol,eps_dielect,sgm_conductivity,prop);
 	qlrpfl2(elev,propv.klim,propv.mdvar,prop,propa,propv);
 	tpd=sqrt((prop.he[0]-prop.he[1])*(prop.he[0]-prop.he[1])+(prop.dist)*(prop.dist));
-	fs=32.45+20.0*log10(frq_mhz)+20.0*log10(tpd/1000.0);	
-	q=prop.dist-propa.dla;	
-			
+	fs=32.45+20.0*log10(frq_mhz)+20.0*log10(tpd/1000.0);
+	q=prop.dist-propa.dla;
+
 	if (int(q)<0.0)
 		strcpy(strmode,"L-o-S");
 	else
@@ -2547,11 +2589,11 @@ void point_to_point(double elev[], double tht_m, double rht_m, double eps_dielec
 			strcpy(strmode,"2_Hrzn");
 
 		if (prop.dist<=propa.dlsa || prop.dist<=propa.dx)
-	
+
 			if(int(prop.dl[1])==0.0)
-				strcat(strmode,"_Peak");			
-			
-			else	
+				strcat(strmode,"_Peak");
+
+			else
 				strcat(strmode,"_Diff");
 
 		else if (prop.dist>propa.dx)
@@ -2564,10 +2606,10 @@ void point_to_point(double elev[], double tht_m, double rht_m, double eps_dielec
 
 
 void point_to_pointMDH_two (double elev[], double tht_m, double rht_m,
-          double eps_dielect, double sgm_conductivity, double eno_ns_surfref, 
-	  double enc_ncc_clcref, double clutter_height, double clutter_density, 
-	  double delta_h_diff, double frq_mhz, int radio_climate, int pol, int mode_var, 
-	  double timepct, double locpct, double confpct, 
+          double eps_dielect, double sgm_conductivity, double eno_ns_surfref,
+	  double enc_ncc_clcref, double clutter_height, double clutter_density,
+	  double delta_h_diff, double frq_mhz, int radio_climate, int pol, int mode_var,
+	  double timepct, double locpct, double confpct,
 	  double &dbloss, int &propmode, double &deltaH, int &errnum)
 
 /*************************************************************************************************
@@ -2606,7 +2648,7 @@ void point_to_pointMDH_two (double elev[], double tht_m, double rht_m,
   double fs;
 
   propmode = -1;  // mode is undefined
-  prop.hg[0] = tht_m;   
+  prop.hg[0] = tht_m;
   prop.hg[1] = rht_m;
   propv.klim = radio_climate;
   prop.encc=enc_ncc_clcref;
@@ -2616,7 +2658,7 @@ void point_to_pointMDH_two (double elev[], double tht_m, double rht_m,
   prop.kwx = 0;
   propv.lvar = 5;
   prop.mdp = -1;
-  prop.ptx=pol;	
+  prop.ptx=pol;
   prop.thera=0.0;
   prop.thenr=0.0;
   ztime = qerfi(timepct);
@@ -2631,11 +2673,11 @@ void point_to_pointMDH_two (double elev[], double tht_m, double rht_m,
 
   /* PRESET VALUES for Basic Version w/o additional inputs active */
 
-  prop.encc = 1000.00;		/*  double enc_ncc_clcref  */          	
+  prop.encc = 1000.00;		/*  double enc_ncc_clcref  */
   prop.cch = 22.5;   		/* double clutter_height */
-  prop.cd = 1.00;              /* double clutter_density */ 
+  prop.cd = 1.00;              /* double clutter_density */
   mode_var = 1; 		/* int mode_var set for FCC ILLR */
-  
+
   if(q<=0.0)
   {
     ja =(long) (3.0 + 0.1 * elev[0]); /* to match addition of (long) */
@@ -2649,11 +2691,11 @@ void point_to_pointMDH_two (double elev[], double tht_m, double rht_m,
   qlrps(frq_mhz,zsys,q,pol,eps_dielect,sgm_conductivity,prop);
   qlrpfl2(elev,propv.klim,propv.mdvar,prop,propa,propv);
   fs=32.45+20.0*log10(frq_mhz)+20.0*log10(prop.dist/1000.0);
-  
+
   deltaH = prop.dh;
   q = prop.dist - propa.dla;
   if(int(q)<0.0)
-    propmode = 0;  // L-of-S 
+    propmode = 0;  // L-of-S
   else
     { if(int(q)==0.0)
         propmode = 4;  // 1-Hrzn
@@ -2668,10 +2710,10 @@ void point_to_pointMDH_two (double elev[], double tht_m, double rht_m,
   errnum = prop.kwx;
 }
 
-void point_to_pointDH (double elev[], double tht_m, double rht_m, 
+void point_to_pointDH (double elev[], double tht_m, double rht_m,
 		  double eps_dielect, double sgm_conductivity, double eno_ns_surfref,
-		  double enc_ncc_clcref, double clutter_height, double clutter_density, 
-		  double delta_h_diff, double frq_mhz, int radio_climate, int pol, 
+		  double enc_ncc_clcref, double clutter_height, double clutter_density,
+		  double delta_h_diff, double frq_mhz, int radio_climate, int pol,
 		  double conf, double rel, double loc,double &dbloss, double &deltaH,
 		  int &errnum)
 /*************************************************************************************************
@@ -2703,7 +2745,7 @@ void point_to_pointDH (double elev[], double tht_m, double rht_m,
   /* double dkm, xkm; */
   double fs;
 
-  prop.hg[0]=tht_m;   
+  prop.hg[0]=tht_m;
   prop.hg[1]=rht_m;
   propv.klim = radio_climate;
   prop.encc=enc_ncc_clcref;
@@ -2713,7 +2755,7 @@ void point_to_pointDH (double elev[], double tht_m, double rht_m,
   prop.kwx = 0;
   propv.lvar = 5;
   prop.mdp = -1;
-  prop.ptx=pol;	
+  prop.ptx=pol;
   prop.thera=0.0;
   prop.thenr=0.0;
   zc = qerfi(conf);
@@ -2727,10 +2769,10 @@ void point_to_pointDH (double elev[], double tht_m, double rht_m,
 
   /* PRESET VALUES for Basic Version w/o additional inputs active */
 
-  prop.encc = 1000.00;		/*  double enc_ncc_clcref  */          	
+  prop.encc = 1000.00;		/*  double enc_ncc_clcref  */
   prop.cch = 22.5;   		/* double clutter_height */
-  prop.cd =  1.00;              /* double clutter_density */ 
- 
+  prop.cd =  1.00;              /* double clutter_density */
+
   if(q<=0.0)
   {
     ja = (long) (3.0 + 0.1 * elev[0]); /* to match KD2BD addition of (long)  */
@@ -2840,16 +2882,16 @@ double pctTime, double pctLoc, double pctConf, double &dbloss, char *strmode, in
 
 
 double ITMAreadBLoss(long ModVar, double deltaH, double tht_m, double rht_m,
-		  double dist_km, int TSiteCriteria, int RSiteCriteria, 
+		  double dist_km, int TSiteCriteria, int RSiteCriteria,
           	  double eps_dielect, double sgm_conductivity, double eno_ns_surfref,
 		  double enc_ncc_clcref,double clutter_height,double clutter_density,
-		  double delta_h_diff, double frq_mhz, int radio_climate, int pol, 
+		  double delta_h_diff, double frq_mhz, int radio_climate, int pol,
 		  int mode_var, double pctTime, double pctLoc, double pctConf)
 {
 	char strmode[200];
 	int errnum;
 	double dbloss;
-	area(ModVar,deltaH,tht_m,rht_m,dist_km,TSiteCriteria,RSiteCriteria, 
+	area(ModVar,deltaH,tht_m,rht_m,dist_km,TSiteCriteria,RSiteCriteria,
 		          eps_dielect,sgm_conductivity,eno_ns_surfref,
 		  	  enc_ncc_clcref,clutter_height,clutter_density,
 		  	  delta_h_diff,frq_mhz,radio_climate,pol,mode_var,pctTime,
