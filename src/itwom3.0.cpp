@@ -2093,11 +2093,12 @@ double d1thx(double pfl[], const double &x1, const double &x2)
 
 	for (j=0; j<n; j++)
 	{
-		while (xa>0.0 && k<np)
-		{
-			xa-=1.0;
-			++k;
-		}
+
+        if (xa > 0.0 && k<np) {
+            int incr = mymin(int(np - k), int(xa) + 1);
+            xa -= incr;
+            k += incr;
+        }
 
 		s[j+2]=pfl[k+2]+(pfl[k+2]-pfl[k+1])*xa;
 		xa=xa+xb;
