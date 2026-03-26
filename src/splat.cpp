@@ -3261,7 +3261,7 @@ void PlotLRMap(struct site source, double altitude, char *plo_filename)
 
         if (count % nsteps_per_report == 0) {
             EM_ASM({
-                progress('Plotting LR map...', $0, $1);
+                Module.progress('Plotting LR map...', $0, $1);
             }, count, total_steps);
         }
 	}
@@ -3283,7 +3283,7 @@ void PlotLRMap(struct site source, double altitude, char *plo_filename)
 
         if (count % nsteps_per_report == 0) {
             EM_ASM({
-                progress('Plotting LR map...', $0, $1);
+                Module.progress('Plotting LR map...', $0, $1);
             }, count, total_steps);
         }
 	}

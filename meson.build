@@ -41,6 +41,12 @@ includes = [
   'src/fontdata.h'
 ]
 
+configure_file(
+  input : 'src/splat.d.ts',
+  output : 'splat.d.ts',
+  configuration : configuration_data(),
+)
+
 executable(
   'splat',
   sources : [
@@ -57,7 +63,7 @@ executable(
   ],
   link_args : wasm_link_args + [
     '-sEXPORT_NAME=Splat',
-    '--emit-tsd=splat.d.ts',
+    '--emit-tsd=splat-base.d.ts',
     '--pre-js', meson.project_source_root() / 'src/preJs.js'
   ]
 )
