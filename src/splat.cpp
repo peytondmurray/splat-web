@@ -28,6 +28,7 @@
 #include <bzlib.h>
 #include <unistd.h>
 #include "fontdata.h"
+#include <emscripten/emscripten.h>
 
 #define GAMMA 2.5
 #define BZBUFFER 65536
@@ -3192,20 +3193,14 @@ void PlotLRMap(struct site source, double altitude, char *plo_filename)
 	   of a topographic map when the WritePPMLR() or
 	   WritePPMSS() functions are later invoked. */
 
-	int y, z, count;
+	int y, count;
 	struct site edge;
-	double lat, lon, minwest, maxnorth, th;
-	unsigned char x, symbol[4];
+	double lat, lon, minwest, maxnorth;
 	static unsigned char mask_value=1;
 	FILE *fd=NULL;
 
 	minwest=dpp+(double)min_west;
 	maxnorth=(double)max_north-dpp;
-
-	symbol[0]='.';
-	symbol[1]='o';
-	symbol[2]='O';
-	symbol[3]='o';
 
 	count=0;
 
@@ -3229,9 +3224,6 @@ void PlotLRMap(struct site source, double altitude, char *plo_filename)
 	if (clutter>0.0)
 		fprintf(stdout,"\nand %.2f %s of ground clutter",metric?clutter*METERS_PER_FOOT:clutter,metric?"meters":"feet");
 
-	fprintf(stdout,"...\n\n 0%c to  25%c ",37,37);
-	fflush(stdout);
-
 	if (plo_filename[0]!=0)
 		fd=fopen(plo_filename,"wb");
 
@@ -3242,14 +3234,14 @@ void PlotLRMap(struct site source, double altitude, char *plo_filename)
 		fprintf(fd,"%d, %d\t; max_west, min_west\n%d, %d\t; max_north, min_north\n",max_west, min_west, max_north, min_north);
 	}
 
-	/* th=pixels/degree divided by 64 loops per
-	   progress indicator symbol (.oOo) printed. */
+    int total_q1 = static_cast<int>(LonDiff(static_cast<double>(max_west), minwest)/dpp);
+    int total_q2 = static_cast<int>((maxnorth-min_north)/dpp);
+    int total_steps = total_q1 + total_q2;
 
-	th=ppd/64.0;
+    // Avoid spamming progress updates every iteration; only write progress each 1% of the job
+    int nsteps_per_report = static_cast<int>(static_cast<double>(total_steps)/100.0);
 
-	z=(int)(th*ReduceAngle(max_west-min_west));
-
-	for (lon=minwest, x=0, y=0; (LonDiff(lon,(double)max_west)<=0.0); y++, lon=minwest+(dpp*(double)y))
+	for (lon=minwest, y=0; (LonDiff(lon,(double)max_west)<=0.0); y++, lon=minwest+(dpp*(double)y))
 	{
 		if (lon>=360.0)
 			lon-=360.0;
@@ -3259,112 +3251,47 @@ void PlotLRMap(struct site source, double altitude, char *plo_filename)
 		edge.alt=altitude;
 
 		PlotLRPath(source,edge,mask_value,fd);
-		count++;
-
-		if (count==z)
-		{
-			fprintf(stdout,"%c",symbol[x]);
-			fflush(stdout);
-			count=0;
-
-			if (x==3)
-				x=0;
-			else
-				x++;
-		}
-	}
-
-	count=0;
-	fprintf(stdout,"\n25%c to  50%c ",37,37);
-	fflush(stdout);
-
-	z=(int)(th*(double)(max_north-min_north));
-
-	for (lat=maxnorth, x=0, y=0; lat>=(double)min_north; y++, lat=maxnorth-(dpp*(double)y))
-	{
-		edge.lat=lat;
-		edge.lon=min_west;
-		edge.alt=altitude;
-
-		PlotLRPath(source,edge,mask_value,fd);
-		count++;
-
-		if (count==z)
-		{
-			fprintf(stdout,"%c",symbol[x]);
-			fflush(stdout);
-			count=0;
-
-			if (x==3)
-				x=0;
-			else
-				x++;
-		}
-	}
-
-	count=0;
-	fprintf(stdout,"\n50%c to  75%c ",37,37);
-	fflush(stdout);
-
-	z=(int)(th*ReduceAngle(max_west-min_west));
-
-	for (lon=minwest, x=0, y=0; (LonDiff(lon,(double)max_west)<=0.0); y++, lon=minwest+(dpp*(double)y))
-	{
-		if (lon>=360.0)
-			lon-=360.0;
 
 		edge.lat=min_north;
 		edge.lon=lon;
 		edge.alt=altitude;
 
 		PlotLRPath(source,edge,mask_value,fd);
-		count++;
+        ++count;
 
-		if (count==z)
-		{
-			fprintf(stdout,"%c",symbol[x]);
-			fflush(stdout);
-			count=0;
-
-			if (x==3)
-				x=0;
-			else
-				x++;
-		}
+        if (count % nsteps_per_report == 0) {
+            EM_ASM({
+                progress('Plotting LR map...', $0, $1);
+            }, count, total_steps);
+        }
 	}
 
-	count=0;
-	fprintf(stdout,"\n75%c to 100%c ",37,37);
-	fflush(stdout);
-
-	z=(int)(th*(double)(max_north-min_north));
-
-	for (lat=(double)min_north, x=0, y=0; lat<(double)max_north; y++, lat=(double)min_north+(dpp*(double)y))
+	for (lat=maxnorth, y=0; lat>=(double)min_north; y++, lat=maxnorth-(dpp*(double)y))
 	{
+		edge.lat=lat;
+		edge.lon=min_west;
+		edge.alt=altitude;
+
+		PlotLRPath(source,edge,mask_value,fd);
+
 		edge.lat=lat;
 		edge.lon=max_west;
 		edge.alt=altitude;
 
 		PlotLRPath(source,edge,mask_value,fd);
-		count++;
+        ++count;
 
-		if (count==z)
-		{
-			fprintf(stdout,"%c",symbol[x]);
-			fflush(stdout);
-			count=0;
-
-			if (x==3)
-				x=0;
-			else
-				x++;
-		}
+        if (count % nsteps_per_report == 0) {
+            EM_ASM({
+                progress('Plotting LR map...', $0, $1);
+            }, count, total_steps);
+        }
 	}
 
 	if (fd!=NULL)
 		fclose(fd);
 
-	fprintf(stdout,"\nDone!\n");
+	fprintf(stdout,"\nLR map done!\n");
 	fflush(stdout);
 
 	if (mask_value<30)

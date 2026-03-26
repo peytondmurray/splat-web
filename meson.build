@@ -45,7 +45,7 @@ executable(
   'splat',
   sources : [
     'src/itwom3.0.cpp',
-    'src/splat.cpp'
+    'src/splat.cpp',
   ],
   dependencies : [
     bz2_dep,
@@ -58,6 +58,7 @@ executable(
   link_args : wasm_link_args + [
     '-sEXPORT_NAME=Splat',
     '--emit-tsd=splat.d.ts',
+    '--pre-js', meson.project_source_root() / 'src/preJs.js'
   ]
 )
 
