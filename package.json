@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/peytondmurray/splat-web.git"
   },
-  "license": "MIT",
+  "license": "GPL-2.0-or-later",
   "author": "Peyton Murray",
   "type": "module",
   "exports": {
